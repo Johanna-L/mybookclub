@@ -10,9 +10,41 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 0) do
+ActiveRecord::Schema.define(version: 2020_04_18_150853) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
+  create_table "books", force: :cascade do |t|
+    t.string "title"
+    t.string "author"
+    t.text "summary"
+    t.integer "year"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.bigint "owner_id"
+    t.boolean "available", default: true
+    t.index ["owner_id"], name: "index_books_on_owner_id"
+  end
+
+  create_table "exchanges", force: :cascade do |t|
+    t.bigint "book_id", null: false
+    t.bigint "person_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.boolean "ongoing", default: true
+    t.index ["book_id"], name: "index_exchanges_on_book_id"
+    t.index ["person_id"], name: "index_exchanges_on_person_id"
+  end
+
+  create_table "people", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.boolean "admin", default: false
+  end
+
+  add_foreign_key "books", "people", column: "owner_id"
+  add_foreign_key "exchanges", "books"
+  add_foreign_key "exchanges", "people"
 end
